@@ -8,9 +8,11 @@ local tilemap
 
 -------------------------------------------------------
 
+love.window.setMode(32*20, 32*15)
+love.window.setTitle("Mini Kamen");
+
 function love.load()
    --love.graphics.setColor(0,0,0)
-   --love.graphics.setBackgroundColor(255,255,255)
    tilemap = {
       kamen_stand = love.graphics.newImage("kamen.png"),
       solids_block = love.graphics.newImage("block.png"),
@@ -19,11 +21,17 @@ end
 
 function love.update(dt)
   theGame.keyboard(game, love.keyboard);
+
+  for _,p in pairs(game.players) do
+    theGame.applyGravity(p)
+    theGame.collideMove(p, game.solids);
+  end
 end
 
 function love.draw()
   for _,p in pairs(game.players) do
-    love.graphics.draw(tilemap[p.img], p.x, p.y);
+    love.graphics.draw(tilemap[p.img], p.x-p.w/2, p.y-p.h/2);
+    love.graphics.rectangle("fill", p.x, p.y, p.w, p.h )
   end
 
   for _,s in pairs(game.solids) do
