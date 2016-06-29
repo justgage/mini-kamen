@@ -36,6 +36,11 @@ function love.touchmoved(id, x, y, dx, dy, pressure)
 end
 
 function love.draw()
+  love.graphics.push()
+  -- love.graphics.rotate(3.14)
+  love.graphics.scale(1/2, 1/2)
+  love.graphics.translate(game.players.kamen.x, game.players.kamen.y)
+  -------
   for _,p in pairs(game.players) do
     love.graphics.draw(tilemap[p.img], p.x-p.w/2, p.y-p.h/2);
     love.graphics.rectangle("line", p.x, p.y, p.w, p.h )
@@ -44,4 +49,7 @@ function love.draw()
   for _,s in pairs(game.solids) do
     love.graphics.draw(tilemap[s.img], s.x, s.y);
   end
+
+  -----
+  love.graphics.pop()
 end
