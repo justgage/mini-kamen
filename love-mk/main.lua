@@ -80,6 +80,7 @@ end
 function love.update(dt)
   theGame.keyboard(game, love.keyboard);
 
+  -- apply main game logic to players
   for _,p in pairs(game.players) do
     theGame.applyGravity(p)
     theGame.applyFriction(p, game.solids)
@@ -111,12 +112,20 @@ function love.draw()
   -- love.graphics.scale(2, 2) -- zoom in (caused ugly pixels)
 
   -- camera!
-  love.graphics.translate(-game.players.kamen.x + (winWidth)/2, -game.players.kamen.y + (winHeight)/2)
+  camx = -game.players.kamen.x + (winWidth)/2
+  camy = -game.players.kamen.y + (winHeight)/2
+  love.graphics.translate(camx, camy)
 
   -- draw players
   for _,p in pairs(game.players) do
-    love.graphics.rectangle("line", p.x, p.y, p.w, p.h )
-    drawAnimation(tilemap[p.img], frameNum, p.x+p.w/2, p.y+p.h/2, p.facing);
+
+    -- love.graphics.rectangle("line", p.x, p.y, p.w, p.h ) -- collsion box debuging
+    --
+    drawAnimation(tilemap[p.img],
+                  frameNum, 
+                  p.x+p.w/2,
+                  p.y+p.h/2, 
+                  p.facing);
   end
 
   -- draw solids
