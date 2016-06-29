@@ -3,10 +3,12 @@ local M = {}
 local function makeObj(x, y, w, h, tilename) 
    return {
       facing = "left",
+      moving = false,
       x = x,
       vx = 0,
       y = y,
       vy = 0,
+      maxv = 3,
       w = w,
       h = h,
       img = tilename,
@@ -18,6 +20,7 @@ local function makeSolid(x, y, tilename)
    local obj = makeObj(x, y, 32, 32, tilename)
 
    obj.solid = true
+   obj.frict = 0.8
 
    return obj
 end
@@ -25,7 +28,7 @@ end
 
 -- makes the game object and retuns it
 function M.init()
-   local kamen = makeObj(64, 64, 12, 16, "kamen_stand")
+   local kamen = makeObj(64, 64, 12, 13, "kamen_stand")
    kamen.grav = 0.6
 
    return {
@@ -95,6 +98,22 @@ function collidesWithAny(obj, solids)
    return false
 end
 
+function M.applyFriction(obj, solids) 
+   if not obj.moving then
+      local frict = 1 -- assume no friction
+
+      for _,s in pairs(solids) do
+         obj.next_y = obj.y + 1
+         obj.next_x = obj.x
+         if collidesWith(obj, s) then
+            frict = s.frict
+         end
+      end
+
+      obj.vx = obj.vx * frict
+   end
+end
+
 
 function M.collideMove(obj,solids) 
    byX = sign(obj.vx)
@@ -133,27 +152,37 @@ function M.collideMove(obj,solids)
 
 end
 
+function M.limitSpeed(gameobj)
+   gameobj.vx = math.min(gameobj.vx,  gameobj.maxv)
+   gameobj.vx = math.max(gameobj.vx, -gameobj.maxv)
+
+   gameobj.vy = math.min(gameobj.vy,  gameobj.maxv)
+   gameobj.vy = math.max(gameobj.vy, -gameobj.maxv)
+   print(gameobj.vx, gameobj.maxv)
+end
+
 function M.keyboard(gameobj, keyboard) 
    local kamen = gameobj.players.kamen
 
    kamen.next_y = kamen.y + 1 -- FIXME remove next_x/next_y
-   if keyboard.isDown("up") 
+   if keyboard.isDown("down") then
+      kamen.vy = kamen.vy + 3;
+   elseif keyboard.isDown("up") 
       and collidesWithAny(kamen, gameobj.solids) 
       then
       kamen.vy = kamen.vy - 10;
    end
 
-   if keyboard.isDown("down") then
-      kamen.vy = kamen.vy + 3;
-   end
-
    if keyboard.isDown("left") then
       kamen.facing = "left"
       kamen.vx = kamen.vx - 1;
-   end
-   if keyboard.isDown("right") then
+      kamen.moving = true
+   elseif keyboard.isDown("right") then
       kamen.facing = "right"
       kamen.vx = kamen.vx + 1;
+      kamen.moving = true
+   else
+      kamen.moving = false
    end
 
    gameobj.players.kamen = kamen

@@ -5,17 +5,18 @@ game = theGame.init()
 
 local tilemap
 local frameNum = 0
-
-
--------------------------------------------------------
-
-winWidth = 32*20
-winHeight = 32*15
+local winWidth = 32*7
+local winHeight = 32*5
 
 love.window.setMode(winWidth, winHeight)
 love.window.setTitle("Mini Kamen");
 
-function makeAnimationImage(path, tilew, tileh) 
+love.graphics.setBackgroundColor( 64, 172, 234 ) -- nice blue
+
+-- this will turn an image into a sprite sheet
+-- note that this only works for horizontal sprites
+-- also asumes that it one image per animation
+function makeAnimation(path, tilew, tileh) 
   img = love.graphics.newImage(path)
   tilew = tilew or 32
   tileh = tileh or 32
@@ -38,6 +39,7 @@ function makeAnimationImage(path, tilew, tileh)
 
 end
 
+-- this will draw an "animation" (see above function)
 function drawAnimation(ani, frameNum, x, y, facing)
   i = math.floor(math.fmod(frameNum, #ani.frames) + 1)
 
@@ -51,33 +53,48 @@ function drawAnimation(ani, frameNum, x, y, facing)
   love.graphics.draw(
     ani.img, -- image
     frame,   -- frame (quad) we want to draw
-    x+halfw, y+halfh, -- position with with offsets for origin
+    x, y, -- position with with offsets for origin
     rot, -- rotation 
     xflip, yflip, -- fliping (actually scaling)
     halfw, halfh) -- origin
 end
 
+
+
+
+-- loads all the images (called once at the begining)
 function love.load()
 
    tilemap = {
-      kamen_stand = makeAnimationImage("kamen.png");
+      kamen_stand = makeAnimation("kamen.png");
       solids_block = love.graphics.newImage("block.png"),
    }
 
     love.graphics.newQuad(0, 0, 32, 32, img:getDimensions())
 end
 
+
+
+
+-- called very often, dt is the time difference between the last frame and now
 function love.update(dt)
   theGame.keyboard(game, love.keyboard);
 
   for _,p in pairs(game.players) do
     theGame.applyGravity(p)
+    theGame.applyFriction(p, game.solids)
+    theGame.limitSpeed(p) -- TODO not working?
     theGame.collideMove(p, game.solids);
   end
 
   frameNum = frameNum + dt*15
 end
 
+
+
+
+
+-- touch controls for mobile
 function love.touchmoved(id, x, y, dx, dy, pressure)
   local kamen = game.players.kamen
 
@@ -85,24 +102,27 @@ function love.touchmoved(id, x, y, dx, dy, pressure)
   kamen.vy = kamen.vy + dy
 end
 
-local rot = 0;
+
+
 
 function love.draw()
-  love.graphics.push()
-  rot = rot +  3.12/10
-  --love.graphics.rotate(rot)
-  love.graphics.scale(2, 2)
-  love.graphics.translate(-game.players.kamen.x + (winWidth)/2/2, -game.players.kamen.y + (winHeight)/2/2)
-  -------
+  love.graphics.push() -- begin camera transformation
+  --love.graphics.rotate(rot) -- rotates camera (crazy!)
+  -- love.graphics.scale(2, 2) -- zoom in (caused ugly pixels)
+
+  -- camera!
+  love.graphics.translate(-game.players.kamen.x + (winWidth)/2, -game.players.kamen.y + (winHeight)/2)
+
+  -- draw players
   for _,p in pairs(game.players) do
     love.graphics.rectangle("line", p.x, p.y, p.w, p.h )
-    drawAnimation(tilemap[p.img], frameNum, p.x-p.w/2, p.y-p.h/2, p.facing);
+    drawAnimation(tilemap[p.img], frameNum, p.x+p.w/2, p.y+p.h/2, p.facing);
   end
 
+  -- draw solids
   for _,s in pairs(game.solids) do
     love.graphics.draw(tilemap[s.img], s.x, s.y);
   end
 
-  -----
-  love.graphics.pop()
+  love.graphics.pop() -- end camera transformation
 end
