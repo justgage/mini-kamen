@@ -2,6 +2,7 @@ local M = {}
 
 local function makeObj(x, y, w, h, tilename) 
    return {
+      facing = "left",
       x = x,
       vx = 0,
       y = y,
@@ -24,7 +25,7 @@ end
 
 -- makes the game object and retuns it
 function M.init()
-   local kamen = makeObj(64, 64, 32,32, "kamen_stand")
+   local kamen = makeObj(64, 64, 12, 16, "kamen_stand")
    kamen.grav = 0.6
 
    return {
@@ -147,9 +148,11 @@ function M.keyboard(gameobj, keyboard)
    end
 
    if keyboard.isDown("left") then
+      kamen.facing = "left"
       kamen.vx = kamen.vx - 1;
    end
    if keyboard.isDown("right") then
+      kamen.facing = "right"
       kamen.vx = kamen.vx + 1;
    end
 
