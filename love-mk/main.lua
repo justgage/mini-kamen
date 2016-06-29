@@ -8,7 +8,10 @@ local tilemap
 
 -------------------------------------------------------
 
-love.window.setMode(32*20, 32*15)
+winWidth = 32*20
+winHeight = 32*15
+
+love.window.setMode(winWidth, winHeight)
 love.window.setTitle("Mini Kamen");
 
 function love.load()
@@ -35,11 +38,14 @@ function love.touchmoved(id, x, y, dx, dy, pressure)
   kamen.vy = kamen.vy + dy
 end
 
+local rot = 0;
+
 function love.draw()
   love.graphics.push()
-  -- love.graphics.rotate(3.14)
-  love.graphics.scale(1/2, 1/2)
-  love.graphics.translate(game.players.kamen.x, game.players.kamen.y)
+  rot = rot +  3.12/10
+  --love.graphics.rotate(rot)
+  love.graphics.scale(2, 2)
+  love.graphics.translate(-game.players.kamen.x + (winWidth)/2/2, -game.players.kamen.y + (winHeight)/2/2)
   -------
   for _,p in pairs(game.players) do
     love.graphics.draw(tilemap[p.img], p.x-p.w/2, p.y-p.h/2);
