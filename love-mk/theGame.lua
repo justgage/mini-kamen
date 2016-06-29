@@ -135,7 +135,7 @@ end
 function M.keyboard(gameobj, keyboard) 
    local kamen = gameobj.players.kamen
 
-   kamen.next_y = kamen.y + 1 -- FIXME
+   kamen.next_y = kamen.y + 1 -- FIXME remove next_x/next_y
    if keyboard.isDown("up") 
       and collidesWithAny(kamen, gameobj.solids) 
       then
@@ -157,6 +157,11 @@ function M.keyboard(gameobj, keyboard)
 
 end
 
+function M.limitSpeed(gameobjs)
+   for _,val in pairs(gameobjs) do
+      -- limit speed
+   end
+end
 
 
 return M
