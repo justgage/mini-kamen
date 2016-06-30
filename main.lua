@@ -25,6 +25,8 @@ function makeAnimation(path, tilew, tileh)
 
   quads = {}
 
+  -- make a quad for each frame of the animaiton
+  -- perhaps not the fastest but it's simple
   for i=1, tileNum do
     quads[i] = love.graphics.newQuad((i-1)*tilew, 0, tilew, tileh, img:getDimensions())
   end
@@ -66,8 +68,8 @@ end
 function love.load()
 
    tilemap = {
-      kamen_stand = makeAnimation("kamen.png");
-      solids_block = love.graphics.newImage("block.png"),
+      kamen_stand = makeAnimation("sprites/kamen.png");
+      solids_block = love.graphics.newImage("sprites/block.png"),
    }
 
     love.graphics.newQuad(0, 0, 32, 32, img:getDimensions())
