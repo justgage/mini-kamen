@@ -1,25 +1,27 @@
 local _ = require("moses")
 local theGame = require("theGame")
+local sti = require("lib.Simple-Tiled-Implementation.sti")
 
 game = theGame.init()
 
 local tilemap
 local frameNum = 0
-local winWidth = 32*7
-local winHeight = 32*5
+local winWidth = 24*40
+local winHeight = 24*30
 
 love.window.setMode(winWidth, winHeight)
-love.window.setTitle("Mini Kamen");
+love.window.setTitle("Jess N' Gage");
 
-love.graphics.setBackgroundColor( 64, 172, 234 ) -- nice blue
+love.graphics.setBackgroundColor( 64, 64, 64 ) -- nice blue
 
 -- this will turn an image into a sprite sheet
 -- note that this only works for horizontal sprites
 -- also asumes that it one image per animation
 function makeAnimation(path, tilew, tileh) 
   img = love.graphics.newImage(path)
-  tilew = tilew or 32
-  tileh = tileh or 32
+  size = img:getHeight()
+  tilew = tilew or size
+  tileh = tileh or size
 
   tileNum = img:getWidth() / tilew
 
@@ -49,7 +51,7 @@ function drawAnimation(ani, frameNum, x, y, facing)
   local halfh =  ani.tileh/2
   local frame =  ani.frames[i]
   local rot = 0
-  local xflip = facing == "left" and -1 or 1 -- ternary operator
+  local xflip = facing == "left" and 1 or -1
   local yflip = 1
 
   love.graphics.draw(
@@ -67,12 +69,14 @@ end
 -- loads all the images (called once at the begining)
 function love.load()
 
-   tilemap = {
-      kamen_stand = makeAnimation("sprites/kamen.png");
-      solids_block = love.graphics.newImage("sprites/block.png"),
-   }
+  tilemap = {
+    gage_stand = makeAnimation("assets/images/gage-walk.png");
+    solids_block = love.graphics.newImage("assets/images/middle-ground.png"),
+  }
 
-    love.graphics.newQuad(0, 0, 32, 32, img:getDimensions())
+  love.graphics.newQuad(0, 0, 24, 24, img:getDimensions())
+
+  map = sti("assets/data/level1.lua")
 end
 
 
@@ -80,10 +84,10 @@ end
 
 -- called very often, dt is the time difference between the last frame and now
 function love.update(dt)
-  theGame.keyboard(game, love.keyboard);
 
   -- apply main game logic to players
   for _,p in pairs(game.players) do
+    theGame.keyboard(p, game, love.keyboard);
     theGame.applyGravity(p)
     theGame.applyFriction(p, game.solids)
     theGame.limitSpeed(p) -- TODO not working?
@@ -91,6 +95,7 @@ function love.update(dt)
   end
 
   frameNum = frameNum + dt*15
+  map:update(dt)
 end
 
 
@@ -99,10 +104,10 @@ end
 
 -- touch controls for mobile
 function love.touchmoved(id, x, y, dx, dy, pressure)
-  local kamen = game.players.kamen
+  local gage = game.players.gage
 
-  kamen.vx = kamen.vx + dx
-  kamen.vy = kamen.vy + dy
+  gage.vx = gage.vx + dx
+  gage.vy = gage.vy + dy
 end
 
 
@@ -114,8 +119,8 @@ function love.draw()
   -- love.graphics.scale(2, 2) -- zoom in (caused ugly pixels)
 
   -- camera!
-  camx = -game.players.kamen.x + (winWidth)/2
-  camy = -game.players.kamen.y + (winHeight)/2
+  camx = -game.players.gage.x + (winWidth)/2
+  camy = -game.players.gage.y + (winHeight)/2
   love.graphics.translate(camx, camy)
 
   -- draw players
@@ -134,6 +139,6 @@ function love.draw()
   for _,s in pairs(game.solids) do
     love.graphics.draw(tilemap[s.img], s.x, s.y);
   end
-
+  map:draw()
   love.graphics.pop() -- end camera transformation
 end

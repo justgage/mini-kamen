@@ -2,13 +2,13 @@ local M = {}
 
 local function makeObj(x, y, w, h, tilename) 
    return {
-      facing = "left",
+      facing = "right",
       moving = false,
       x = x,
       vx = 0,
       y = y,
       vy = 0,
-      maxv = 3,
+      maxv = 5,
       w = w,
       h = h,
       img = tilename,
@@ -17,7 +17,7 @@ local function makeObj(x, y, w, h, tilename)
 end
 
 local function makeSolid(x, y, tilename)
-   local obj = makeObj(x, y, 32, 32, tilename)
+   local obj = makeObj(x, y, 24, 24, tilename)
 
    obj.solid = true
    obj.frict = 0.8
@@ -28,40 +28,47 @@ end
 
 -- makes the game object and retuns it
 function M.init()
-   local kamen = makeObj(64, 64, 12, 13, "kamen_stand")
-   kamen.grav = 0.6
+   local gage = makeObj(64, 64, 24, 24, "gage_stand")
+   gage.grav = 0.6
+
+   gage.keys = {
+      up = "up",
+      down = "down",
+      left = "left",
+      right = "right",
+   };
 
    return {
       tilemap = {},
       solids = {
-         makeSolid(32*(7 + 1) , 13*32 - 0  , "solids_block") ,
-         makeSolid(32*(7 + 2) , 13*32 - 0  , "solids_block") ,
-         makeSolid(32*(7 + 3) , 13*32 - 0  , "solids_block") ,
-         makeSolid(32*(7 + 4) , 13*32 - 0  , "solids_block") ,
-         makeSolid(32*(7 + 5) , 13*32 - 0  , "solids_block") ,
-         makeSolid(32*(7 + 6) , 13*32 - 0  , "solids_block") ,
-         makeSolid(32*(7 + 6) , 13*32 - 32 , "solids_block") ,
+         makeSolid(24*(7 + 1) , 13*24 - 0  , "solids_block") ,
+         makeSolid(24*(7 + 2) , 13*24 - 0  , "solids_block") ,
+         makeSolid(24*(7 + 3) , 13*24 - 0  , "solids_block") ,
+         makeSolid(24*(7 + 4) , 13*24 - 0  , "solids_block") ,
+         makeSolid(24*(7 + 5) , 13*24 - 0  , "solids_block") ,
+         makeSolid(24*(7 + 6) , 13*24 - 0  , "solids_block") ,
+         makeSolid(24*(7 + 6) , 13*24 - 24 , "solids_block") ,
          
-         makeSolid(0  , 32*6 , "solids_block") ,
-         makeSolid(0  , 32*7 , "solids_block") ,
-         makeSolid(0  , 32*8 , "solids_block") ,
-         makeSolid(0  , 32*9 , "solids_block") ,
-         makeSolid(0  , 32*10 , "solids_block") ,
-         makeSolid(0  , 32*11 , "solids_block") ,
+         makeSolid(0  , 24*6 , "solids_block") ,
+         makeSolid(0  , 24*7 , "solids_block") ,
+         makeSolid(0  , 24*8 , "solids_block") ,
+         makeSolid(0  , 24*9 , "solids_block") ,
+         makeSolid(0  , 24*10 , "solids_block") ,
+         makeSolid(0  , 24*11 , "solids_block") ,
 
-         makeSolid(0    , 14*32 - 32 , "solids_block") ,
-         makeSolid(0    , 14*32 - 0  , "solids_block") ,
-         makeSolid(32*1 , 14*32 - 0  , "solids_block") ,
-         makeSolid(32*2 , 14*32 - 0  , "solids_block") ,
-         makeSolid(32*3 , 14*32 - 0  , "solids_block") ,
-         makeSolid(32*4 , 14*32 - 0  , "solids_block") ,
-         makeSolid(32*5 , 14*32 - 0  , "solids_block") ,
-         makeSolid(32*6 , 14*32 - 0  , "solids_block") ,
-         makeSolid(32*6 , 14*32 - 32 , "solids_block") ,
+         makeSolid(0    , 14*24 - 24 , "solids_block") ,
+         makeSolid(0    , 14*24 - 0  , "solids_block") ,
+         makeSolid(24*1 , 14*24 - 0  , "solids_block") ,
+         makeSolid(24*2 , 14*24 - 0  , "solids_block") ,
+         makeSolid(24*3 , 14*24 - 0  , "solids_block") ,
+         makeSolid(24*4 , 14*24 - 0  , "solids_block") ,
+         makeSolid(24*5 , 14*24 - 0  , "solids_block") ,
+         makeSolid(24*6 , 14*24 - 0  , "solids_block") ,
+         makeSolid(24*6 , 14*24 - 24 , "solids_block") ,
 
       },
       players = {
-         kamen = kamen
+         gage = gage
       }
    }
 end
@@ -156,44 +163,32 @@ function M.limitSpeed(gameobj)
    gameobj.vx = math.min(gameobj.vx,  gameobj.maxv)
    gameobj.vx = math.max(gameobj.vx, -gameobj.maxv)
 
-   gameobj.vy = math.min(gameobj.vy,  gameobj.maxv)
-   gameobj.vy = math.max(gameobj.vy, -gameobj.maxv)
-   print(gameobj.vx, gameobj.maxv)
+   gameobj.vy = math.min(gameobj.vy,  gameobj.maxv*3)
+   gameobj.vy = math.max(gameobj.vy, -gameobj.maxv*3)
 end
 
-function M.keyboard(gameobj, keyboard) 
-   local kamen = gameobj.players.kamen
 
-   kamen.next_y = kamen.y + 1 -- FIXME remove next_x/next_y
-   if keyboard.isDown("down") then
-      kamen.vy = kamen.vy + 3;
-   elseif keyboard.isDown("up") 
-      and collidesWithAny(kamen, gameobj.solids) 
+function M.keyboard(player, gameobj, keyboard) 
+   player.next_y = player.y + 1 -- FIXME remove next_x/next_y
+   if keyboard.isDown(player.keys.down) then
+      player.vy = player.vy + 3;
+   elseif keyboard.isDown(player.keys.up) 
+      and collidesWithAny(player, gameobj.solids) 
       then
-      kamen.vy = kamen.vy - 10;
+      player.vy = player.vy - 10;
    end
 
-   if keyboard.isDown("left") then
-      kamen.facing = "left"
-      kamen.vx = kamen.vx - 1;
-      kamen.moving = true
-   elseif keyboard.isDown("right") then
-      kamen.facing = "right"
-      kamen.vx = kamen.vx + 1;
-      kamen.moving = true
+   if keyboard.isDown(player.keys.left) then
+      player.facing = "left"
+      player.vx = player.vx - 1;
+      player.moving = true
+   elseif keyboard.isDown(player.keys.right) then
+      player.facing = "right"
+      player.vx = player.vx + 1;
+      player.moving = true
    else
-      kamen.moving = false
-   end
-
-   gameobj.players.kamen = kamen
-
-end
-
-function M.limitSpeed(gameobjs)
-   for _,val in pairs(gameobjs) do
-      -- limit speed
+      player.moving = false
    end
 end
-
 
 return M
