@@ -2,12 +2,16 @@ local _ = require("moses")
 local theGame = require("theGame")
 local sti = require("lib.Simple-Tiled-Implementation.sti")
 
-game = theGame.init()
-
 local tilemap
 local frameNum = 0
 local winWidth = 24*40
 local winHeight = 24*30
+
+local map = sti("assets/data/level1.lua")
+map:resize(winWidth, winHeight);
+
+local game = theGame.init(map)
+
 
 love.window.setMode(winWidth, winHeight)
 love.window.setTitle("Jess N' Gage");
@@ -75,8 +79,6 @@ function love.load()
   }
 
   love.graphics.newQuad(0, 0, 24, 24, img:getDimensions())
-
-  map = sti("assets/data/level1.lua")
 end
 
 
@@ -115,14 +117,14 @@ end
 
 function love.draw()
   love.graphics.push() -- begin camera transformation
-  --love.graphics.rotate(rot) -- rotates camera (crazy!)
-  -- love.graphics.scale(2, 2) -- zoom in (caused ugly pixels)
 
   -- camera!
   camx = -game.players.gage.x + (winWidth)/2
   camy = -game.players.gage.y + (winHeight)/2
+
   love.graphics.translate(camx, camy)
 
+  map:draw(camx, camy)
   -- draw players
   for _,p in pairs(game.players) do
 
@@ -135,10 +137,9 @@ function love.draw()
                   p.facing);
   end
 
-  -- draw solids
-  for _,s in pairs(game.solids) do
-    love.graphics.draw(tilemap[s.img], s.x, s.y);
-  end
-  map:draw()
+  -- -- draw solids
+  -- for _,s in pairs(game.solids) do
+  --   love.graphics.draw(tilemap[s.img], s.x, s.y);
+  -- end
   love.graphics.pop() -- end camera transformation
 end

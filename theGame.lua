@@ -27,7 +27,7 @@ end
 
 
 -- makes the game object and retuns it
-function M.init()
+function M.init(map)
    local gage = makeObj(64, 64, 24, 24, "gage_stand")
    gage.grav = 0.6
 
@@ -38,35 +38,19 @@ function M.init()
       right = "right",
    };
 
+
+   local solids = {}
+
+
+   for y, row in pairs(map.layers["Foreground"].data) do
+      for x, tile in pairs(row) do
+         solids[#solids+1] = makeSolid(24*( x-1 ), 24*( y-1  ), "solids_block")
+      end
+   end
+
    return {
       tilemap = {},
-      solids = {
-         makeSolid(24*(7 + 1) , 13*24 - 0  , "solids_block") ,
-         makeSolid(24*(7 + 2) , 13*24 - 0  , "solids_block") ,
-         makeSolid(24*(7 + 3) , 13*24 - 0  , "solids_block") ,
-         makeSolid(24*(7 + 4) , 13*24 - 0  , "solids_block") ,
-         makeSolid(24*(7 + 5) , 13*24 - 0  , "solids_block") ,
-         makeSolid(24*(7 + 6) , 13*24 - 0  , "solids_block") ,
-         makeSolid(24*(7 + 6) , 13*24 - 24 , "solids_block") ,
-         
-         makeSolid(0  , 24*6 , "solids_block") ,
-         makeSolid(0  , 24*7 , "solids_block") ,
-         makeSolid(0  , 24*8 , "solids_block") ,
-         makeSolid(0  , 24*9 , "solids_block") ,
-         makeSolid(0  , 24*10 , "solids_block") ,
-         makeSolid(0  , 24*11 , "solids_block") ,
-
-         makeSolid(0    , 14*24 - 24 , "solids_block") ,
-         makeSolid(0    , 14*24 - 0  , "solids_block") ,
-         makeSolid(24*1 , 14*24 - 0  , "solids_block") ,
-         makeSolid(24*2 , 14*24 - 0  , "solids_block") ,
-         makeSolid(24*3 , 14*24 - 0  , "solids_block") ,
-         makeSolid(24*4 , 14*24 - 0  , "solids_block") ,
-         makeSolid(24*5 , 14*24 - 0  , "solids_block") ,
-         makeSolid(24*6 , 14*24 - 0  , "solids_block") ,
-         makeSolid(24*6 , 14*24 - 24 , "solids_block") ,
-
-      },
+      solids = solids,
       players = {
          gage = gage
       }
