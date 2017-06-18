@@ -74,6 +74,8 @@ end
 function love.load()
 
   tilemap = {
+    jess_run = makeAnimation("assets/images/jess-run.png");
+    jess_stand = makeAnimation("assets/images/jess.png");
     gage_stand = makeAnimation("assets/images/gage-walk.png");
     solids_block = love.graphics.newImage("assets/images/middle-ground.png"),
   }

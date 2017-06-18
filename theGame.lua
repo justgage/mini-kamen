@@ -32,6 +32,16 @@ function M.init(map)
    gage.grav = 0.6
 
    gage.keys = {
+      up = "w",
+      down = "s",
+      left = "a",
+      right = "d",
+   };
+
+   local jess = makeObj(64, 24*4, 24, 24, "jess_stand")
+   jess.grav = 0.6
+
+   jess.keys = {
       up = "up",
       down = "down",
       left = "left",
@@ -52,7 +62,8 @@ function M.init(map)
       tilemap = {},
       solids = solids,
       players = {
-         gage = gage
+         gage = gage,
+         jess = jess
       }
    }
 end
