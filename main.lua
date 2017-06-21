@@ -130,8 +130,10 @@ function love.draw()
   -- draw players
   for _,p in pairs(game.players) do
 
-    -- love.graphics.rectangle("line", p.x, p.y, p.w, p.h ) -- collsion box debuging
-    --
+    -- collsion box debuging
+    -- love.graphics.rectangle("line", p.x, p.y, p.w, p.h ) 
+
+    -- draw player
     drawAnimation(tilemap[p.img],
                   frameNum, 
                   p.x+p.w/2,
