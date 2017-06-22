@@ -21,7 +21,7 @@ love.graphics.setBackgroundColor( 64, 64, 64 ) -- nice blue
 -- this will turn an image into a sprite sheet
 -- note that this only works for horizontal sprites
 -- also asumes that it one image per animation
-function makeAnimation(path, tilew, tileh) 
+function makeAnimation(path, tilew, tileh)
   img = love.graphics.newImage(path)
   size = img:getHeight()
   tilew = tilew or size
@@ -62,7 +62,7 @@ function drawAnimation(ani, frameNum, x, y, facing)
     ani.img, -- image
     frame,   -- frame (quad) we want to draw
     x, y, -- position with with offsets for origin
-    rot, -- rotation 
+    rot, -- rotation
     xflip, yflip, -- fliping (actually scaling)
     halfw, halfh) -- origin
 end
@@ -131,13 +131,13 @@ function love.draw()
   for _,p in pairs(game.players) do
 
     -- collsion box debuging
-    -- love.graphics.rectangle("line", p.x, p.y, p.w, p.h ) 
+    -- love.graphics.rectangle("line", p.x, p.y, p.w, p.h )
 
     -- draw player
     drawAnimation(tilemap[p.img],
-                  frameNum, 
+                  frameNum,
                   p.x+p.w/2,
-                  p.y+p.h/2, 
+                  p.y+p.h/2,
                   p.facing);
   end
 
