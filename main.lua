@@ -16,7 +16,7 @@ local game = theGame.init(map)
 love.window.setMode(winWidth, winHeight)
 love.window.setTitle("Jess N' Gage");
 
-love.graphics.setBackgroundColor( 64, 64, 64 ) -- nice blue
+love.graphics.setBackgroundColor( 64, 64, 64 )
 
 -- this will turn an image into a sprite sheet
 -- note that this only works for horizontal sprites
@@ -68,8 +68,6 @@ function drawAnimation(ani, frameNum, x, y, facing)
 end
 
 
-
-
 -- loads all the images (called once at the begining)
 function love.load()
 
@@ -82,8 +80,6 @@ function love.load()
 
   love.graphics.newQuad(0, 0, 24, 24, img:getDimensions())
 end
-
-
 
 
 -- called very often, dt is the time difference between the last frame and now
@@ -121,12 +117,15 @@ function love.draw()
   love.graphics.push() -- begin camera transformation
 
   -- camera!
-  camx = -game.players.gage.x + (winWidth)/2
-  camy = -game.players.gage.y + (winHeight)/2
+  gage = game.players.gage
+  jess = game.players.jess
+  camx = math.floor(-(gage.x + jess.x)/2 + (winWidth)/2)
+  camy = math.floor(-(gage.y + jess.y)/2 + (winHeight)/2)
+  camx = math.min(0, camx)
+  camy = math.min(0, camy)
 
   love.graphics.translate(camx, camy)
 
-  map:draw(camx, camy)
   -- draw players
   for _,p in pairs(game.players) do
 
@@ -139,6 +138,8 @@ function love.draw()
                   p.x+p.w/2,
                   p.y+p.h/2,
                   p.facing);
+  map:drawLayer(map.layers["Foreground"])
+  map:drawLayer(map.layers["Background-front"])
   end
 
   -- -- draw solids

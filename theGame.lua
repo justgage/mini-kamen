@@ -1,6 +1,6 @@
 local M = {}
 
-local function makeObj(x, y, w, h, tilename) 
+local function makeObj(x, y, w, h, tilename)
    return {
       facing = "right",
       moving = false,
@@ -86,7 +86,7 @@ local function collidesWith(a, b)
           b.y < a.next_y + a.h)
 end
 
-function M.applyGravity(obj) 
+function M.applyGravity(obj)
    obj.vy = obj.vy + obj.grav
 end
 
@@ -100,7 +100,7 @@ function collidesWithAny(obj, solids)
    return false
 end
 
-function M.applyFriction(obj, solids) 
+function M.applyFriction(obj, solids)
    if not obj.moving then
       local frict = 1 -- assume no friction
 
@@ -117,7 +117,7 @@ function M.applyFriction(obj, solids)
 end
 
 
-function M.collideMove(obj,solids) 
+function M.collideMove(obj,solids)
    byX = sign(obj.vx)
    byY = sign(obj.vy)
 
@@ -163,12 +163,12 @@ function M.limitSpeed(gameobj)
 end
 
 
-function M.keyboard(player, gameobj, keyboard) 
+function M.keyboard(player, gameobj, keyboard)
    player.next_y = player.y + 1 -- FIXME remove next_x/next_y
    if keyboard.isDown(player.keys.down) then
       player.vy = player.vy + 3;
-   elseif keyboard.isDown(player.keys.up) 
-      and collidesWithAny(player, gameobj.solids) 
+   elseif keyboard.isDown(player.keys.up)
+      and collidesWithAny(player, gameobj.solids)
       then
       player.vy = player.vy - 10;
    end
