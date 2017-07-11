@@ -24,11 +24,12 @@ function M.init(map)
       down = "down",
       left = "left",
       right = "right",
+      shoot = "space",
    };
 
 
+   -- create the map --
    local solids = {}
-
 
    for y, row in pairs(map.layers["Foreground"].data) do
       for x, tile in pairs(row) do
@@ -36,13 +37,17 @@ function M.init(map)
       end
    end
 
+
+   local bullets = {arrow}
+
    return {
       tilemap = {},
       solids = solids,
       players = {
          gage = gage,
          jess = jess
-      }
+      },
+      bullets = bullets
    }
 end
 

@@ -1,6 +1,8 @@
 local function makeObj(x, y, w, h, tilename)
    return {
       facing = "right",
+      state = "normal",
+      remove = false,
       moving = false,
       x = x,
       vx = 0,

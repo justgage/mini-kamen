@@ -4,8 +4,10 @@
 local Level = require("src.level")
 local Animation = require("src.animation")
 local MovementBehaviors = require("src.movementBehaviors")
+local LifecycleBehaviors = require("src.lifecycleBehaviors")
 local Collision = require("src.collision")
 local Player = require("src.player")
+local Jess = require("src.Jess")
 
 -------------------------------
 -- libs
@@ -40,35 +42,16 @@ love.graphics.setBackgroundColor( 64, 64, 64 )
 function love.load()
 
   tilemap = {
-    jess_run = Animation.new("assets/images/jess-run.png");
-    jess_stand = Animation.new("assets/images/jess.png");
-    gage_stand = Animation.new("assets/images/gage-walk.png");
+    jess_run = Animation.new("assets/images/jess-run.png"),
+    jess_stand = Animation.new("assets/images/jess.png"),
+    gage_stand = Animation.new("assets/images/gage-walk.png"),
     solids_block = love.graphics.newImage("assets/images/middle-ground.png"),
+    arrow = Animation.new("assets/images/jess-arrow.png", 13, 3),
   }
 
   love.graphics.newQuad(0, 0, 24, 24, img:getDimensions())
 end
 
-
-------------------------------------
--- called very often, dt is the
--- time difference between the last
--- frame and now
------------------------------------
-function love.update(dt)
-
-  -- apply main game logic to players
-  for _,p in pairs(level.players) do
-    Player.keyboard(p, level, love.keyboard);
-    MovementBehaviors.applyGravity(p)
-    MovementBehaviors.applyFriction(p, level.solids)
-    MovementBehaviors.limitSpeed(p)
-    Collision.collideMove(p, level.solids);
-  end
-
-  frameNum = frameNum + dt*15
-  map:update(dt)
-end
 
 
 
@@ -98,8 +81,8 @@ function love.draw()
   love.graphics.push() -- begin camera transformation
 
   -- camera!
-  gage = level.players.gage
-  jess = level.players.jess
+  local gage = level.players.gage
+  local jess = level.players.jess
   camx = math.floor(-(gage.x + jess.x)/2 + (winWidth)/2)
   camy = math.floor(-(gage.y + jess.y)/2 + (winHeight)/2)
   camx = math.min(0, camx)
@@ -119,9 +102,50 @@ function love.draw()
                   p.x+p.w/2,
                   p.y+p.h/2,
                   p.facing);
+  end
+
+  for _,p in pairs(level.bullets) do
+    Animation.draw(tilemap[p.img],
+                  frameNum,
+                  p.x+p.w/2,
+                  p.y+p.h/2,
+                  p.facing);
+  end
+
   map:drawLayer(map.layers["Foreground"])
   map:drawLayer(map.layers["Background-front"])
-  end
 
   love.graphics.pop() -- end camera transformation
 end
+
+------------------------------------
+-- called very often, dt is the
+-- time difference between the last
+-- frame and now
+-----------------------------------
+function love.update(dt)
+
+  -- apply main game logic to players
+  for _,p in pairs(level.players) do
+    Player.keyboard(p, level, love.keyboard);
+    MovementBehaviors.applyGravity(p)
+    MovementBehaviors.applyFriction(p, level.solids)
+    MovementBehaviors.limitSpeed(p)
+    Collision.collideMove(p, level.solids);
+  end
+
+  Jess.update(level.players.jess, level.bullets)
+
+  for _,b in pairs(level.bullets) do
+    Collision.collideMove(b, level.solids);
+    MovementBehaviors.applyGravity(b)
+    MovementBehaviors.applyFriction(b, level.solids)
+    LifecycleBehaviors.lowerLife(b, 1)
+  end
+
+  level.bullets = LifecycleBehaviors.removeDead(level.bullets)
+
+  frameNum = frameNum + dt*15
+  map:update(dt)
+end
+

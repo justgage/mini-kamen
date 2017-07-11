@@ -1,6 +1,9 @@
 local M = {}
 local Collision = require('src.collision');
 
+----------------------------------------------------
+-- This maps the keyboard input into player states
+---------------------------------------------------
 function M.keyboard(player, gameobj, keyboard)
    player.next_y = player.y + 1 -- FIXME remove next_x/next_y
    if keyboard.isDown(player.keys.down) then
