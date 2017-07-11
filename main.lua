@@ -19,6 +19,8 @@ local tilemap
 local frameNum = 0
 local winWidth = 24*40
 local winHeight = 24*30
+local camx=0
+local camy=0
 
 local map = sti("assets/data/level1.lua")
 map:resize(winWidth, winHeight);
@@ -76,8 +78,16 @@ end
 function love.touchmoved(id, x, y, dx, dy, pressure)
   local gage = level.players.gage
 
-  gage.vx = gage.vx + dx
-  gage.vy = gage.vy + dy
+  if x < camX then
+    gage.facing = "left"
+    gage.vx = gage.vx - 1;
+    gage.moving = true
+  elseif x > camX then
+    gage.facing = "right"
+    gage.vx = gage.vx + 1;
+    gage.moving = true
+  end
+
 end
 
 
