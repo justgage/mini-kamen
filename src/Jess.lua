@@ -9,7 +9,8 @@ function M.update(jess, bullets)
     jess.state = "shooting"
   elseif jess.state == "shooting" then
     jess.state = "normal"
-    table.insert(bullets, Bullets.makeArrow(jess.x, jess.y+jess.h/2, jess.facing))
+    arrow = Bullets.makeArrow(jess.x, jess.y+jess.h/2, jess.facing)
+    table.insert(bullets, arrow)
   end
 end
 
