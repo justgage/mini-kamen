@@ -24,7 +24,7 @@ local winHeight = 24*30
 local camx=0
 local camy=0
 
-local map = sti("assets/data/level1.lua")
+local map = sti("assets/data/level0.lua")
 map:resize(winWidth, winHeight);
 
 local level = Level.init(map)
@@ -113,7 +113,7 @@ function love.draw()
   end
 
   map:drawLayer(map.layers["Foreground"])
-  map:drawLayer(map.layers["Background-front"])
+  -- map:drawLayer(map.layers["Background-front"])
 
   love.graphics.pop() -- end camera transformation
 end
