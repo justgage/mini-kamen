@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="27" height="21" tilewidth="24" tileheight="24" nextobjectid="37">
- <tileset firstgid="1" name="basic" tilewidth="24" tileheight="24" tilecount="168">
+<map version="1.0" tiledversion="1.0.1" orientation="orthogonal" renderorder="right-down" width="27" height="21" tilewidth="24" tileheight="24" nextobjectid="37">
+ <tileset firstgid="1" name="basic" tilewidth="24" tileheight="24" tilecount="168" columns="7">
   <image source="../images/backgroud.png" width="168" height="576"/>
   <tile id="0">
    <properties>
